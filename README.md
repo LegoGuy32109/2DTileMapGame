@@ -7,7 +7,7 @@ Final Project for 2D game development from Andy Harris *(Inspired by mobile game
 
 ## User Instructions
 
-To play my game, just click the **[bold link here](https://legoguy32109.itch.io/only-1-can-make-it-to-level-10)** or up in the title to reach the itch.io page. You can run it in your browser and you move the player with WASD or the arrow keys ➡⬅⬆⬇. Unfortunately it is not mobile friendly, you will need a computer with a keyboard and an internet connection.
+To play my game, just click the **[bold link here](https://legoguy32109.itch.io/only-1-can-make-it-to-level-10)** or up in the title to reach the itch.io page. You can run it in your browser and you move the player with **WASD** or the arrow keys ➡⬅⬆⬇. To restart the level if you get stuck, or want to try for lower moves, use **R**.Unfortunately it is not mobile friendly, you will need a computer with a keyboard and an internet connection.
 
 The game is made in [Godot](https://godotengine.org/), an amazing game engine that makes game design fun. Using nodes I was quickly able to prototype game mechanics, then hone them through GDscript. I was drawn to use Godot beacuse of their interesting tileMap editor. I was getting exhausted manually inputting coordinates to design levels. With some interesting advice from [PlayWithFurcifer](https://www.youtube.com/watch?v=5mGa2m_qCPQ) I discovered how to use scenes for tileMaps!
 
@@ -38,7 +38,36 @@ I had to be careful to not do this before all the nodes were loaded, or I could 
 
 ## Game Design Document
 
+### Components of a Level
+
+Each level is titled `Level<level_number>.tscn` in a the `./Levels` directory. When the game end state is activated, a dialog pops up explaining the level is over, and once accepted loads the next level based on the formula. `Level(<cur_level_number>+1).tscn`, if that level file can't be found, load Level1 to loop the game.
+
+![image of node tree in Level 1](ScreenShots/Level1NodeTree.jpg)
+
+- Scene root (Level1)
+  - TileMap (WorldTiles)
+  - Group of reused nodes (LevelConstants)
+    - Camera to render scene to display (Camera2D)
+    - Player scene incorperating movement and user input (Player)
+    - Popup when level ends to confirm next level (AcceptDialog)
+    - Group of tiles to activate to complete level (Spots)
+    - Level name, follows formula `"Level "+str(<cur_level_number>)` (NameLabel)
+    - Text displaying moves taken in level `"Moves: "+moves` (MovesLabel)
+  - Optional label displaying help text (HelpLabel) *can have more than one*
+
+Early in development, I had the game manager script attached to the scene root, so it could access all the nodes under it. I later found I was copying a lot of nodes with no changes, so I decided to put these 'level constants' into a scene and easily reuse them for each level. I then found that attaching the game manager script to this scene made a lot more sense then having to navigate down a node to grab data from all the nodes, so I simply rewrote any reference to the tileMap to be the first child of the parent. `onready var tilemap = get_parent().get_child(0)` The final headache was when the script would run too early before all the nodes had been loaded into the scene, and I would get errors trying to replace tiles that didn't exist yet. To fix that I simply added checks that the scene was loaded, `ready == true` and double check the objects I was referencing existed `if tilemap:`. I highly recommend seperating objects you use with no changes into a scene that you can reference later, it made generating levels a lot easier. Also, when you set the LevelConstants scene to have editable children, I could then specify the location of the player and labels when I needed to change their postions depending on the level design, very convenient. 👍
+
+### Player Components
+
+The Player scene consisits of a KinematicBody host with the `Player.gd` script attached. I make use of the collision shape system in Godot that interacts well with raycasts to check for collisions during movement. The sprite is named Player and is an image I edited from reference.
+
+![image of node tree in Player scene](ScreenShots/PlayerNodeTree.jpg)
+
+The player moves by checking `_unhandled_input(event)` and determining if the event corresponds to a direction. It will also reset the scene if the event is 'reset' from an **R**. As it initiall moves, it calculates the vector of movement from an identity vector in the direction multiplied by the grid_size, in this case the game is 16x16 so `grid_size = 16`. First, the raycast is cast along that vector, then updated to receive collision information. Depending on if the player just tried to move into a wall, it may not move at all but if it can move, it starts the `continue_move(vector_pos: Vector2)` function based on the direction. This will move the Player however many spaces it can, checking each time if a collision has been made then stopping. This implements that behavior I see on mobile game adds of a ball sliding across an ice puzzle, and I was inspried to recreate it.
+
 ## Software Engineering Plan
+
+I didn't partner with anyone, but here's some information on the components of the game.
 
 |file suffix|file type description|
 |:-:|-|
