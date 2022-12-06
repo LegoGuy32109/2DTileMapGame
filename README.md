@@ -11,6 +11,8 @@ To play my game, just click the **[bold link here](https://legoguy32109.itch.io/
 
 The game is made in [Godot](https://godotengine.org/), an amazing game engine that makes game design fun. Using nodes I was quickly able to prototype game mechanics, then hone them through GDscript. I was drawn to use Godot beacuse of their interesting tileMap editor. I was getting exhausted manually inputting coordinates to design levels. With some interesting advice from [PlayWithFurcifer](https://www.youtube.com/watch?v=5mGa2m_qCPQ) I discovered how to use scenes for tileMaps!
 
+### TileMap innovation [found in this video](https://www.youtube.com/watch?v=5mGa2m_qCPQ)
+
 What that last part meant, was initially the biggest limitation for tile maps is that you can draw reigons for Collisons, light Occlusions, or a connected Nav mesh for path finding. These features are fine for the walls that only need collision areas, but I needed player interacts to happen when I walked over these tiles...
 ![image of tileSet editor, it has limited functionality](ScreenShots/tileSetEditor.jpg)
 
@@ -38,6 +40,14 @@ I had to be careful to not do this before all the nodes were loaded, or I could 
 
 ## Software Engineering Plan
 
+|file suffix|file type description|
+|:-:|-|
+|.gd | GDscript file, lines of code that are tied to specific nodes in the project|
+|.tscn| Scene file, a heirarchy of nodes that themselves could be sub scenes. A default scene file must be assigned in a Godot project to be the one rendered on startup|
+|.png| image, in this case used for Sprites |
+|.ogg | sound file, in this case for sound effects in game |
+|.ttf | font data file |
+
 ### Structure of the project
 
 - [Game.gd](Game.gd) - Game manager script
@@ -47,7 +57,7 @@ I had to be careful to not do this before all the nodes were loaded, or I could 
 - [LevelConstants.tscn](LevelConstants.tscn) - Group of nodes necessary for every level
 - [Player.tscn](Player.tscn) - Simple scene for player movement and control
 - Levels - Directory of levels in game
-  - [Level1.tscn](Levels/Level1.tscn)
+  - [Level1.tscn](Levels/Level1.tscn) - Default scene for this project, starts here
   - [Level2.tscn](Levels/Level2.tscn)
   - ...
   - [Level11.tscn](Levels/Level11.tscn)
