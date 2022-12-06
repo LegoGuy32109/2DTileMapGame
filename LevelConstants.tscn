@@ -1,0 +1,57 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Game.gd" type="Script" id=2]
+[ext_resource path="res://Assets/yoster-island.regular.ttf" type="DynamicFontData" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 12
+font_data = ExtResource( 3 )
+
+[node name="LevelConstants" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true
+zoom = Vector2( 0.25, 0.24 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 112, 32 )
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+margin_left = 112.0
+margin_top = 64.0
+margin_right = 218.0
+margin_bottom = 122.0
+window_title = ":)"
+dialog_text = "Level Cleared!"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spots" type="Node2D" parent="."]
+
+[node name="NameLabel" type="Label" parent="."]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 65.0
+margin_bottom = 30.0
+custom_fonts/font = SubResource( 1 )
+text = "Level 1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MovesLabel" type="Label" parent="."]
+margin_left = 16.0
+margin_top = 32.0
+margin_right = 76.0
+margin_bottom = 46.0
+custom_fonts/font = SubResource( 1 )
+text = "Moves: 0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="confirmed" from="AcceptDialog" to="." method="_on_AcceptDialog_confirmed"]
