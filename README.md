@@ -16,7 +16,7 @@ What that last part meant, was initially the biggest limitation for tile maps is
 
 This behavior can be encapsultaed in a scene, which is the Godot answer to Unity prefabs. A simple area that modulates itself to be greener when the player walks over it. It also store the state that it's activated so it won't be activated again, as without that the sound effect would constantly play as the character moved over them.
 
-The soultion, render a dummy tile in the tileMap that are individually replaced by the scene as the level loads. [Here](Game.gd#L22) I go through each cell in the tileMap, identify if it's the dummy and should be replaced, then render and instance of the proper tile from the scene and add it to the same position of the current dummy.
+The soultion, render a dummy tile in the tileMap that are individually replaced by the scene as the level loads. [Here](Game.gd#L22) I go through each cell in the tileMap, identify if it's the dummy and should be replaced, then make an instance of the proper tile from the scene and add it to the same position of the current dummy.
 
 ```GDscript
 # in Game.gd ...
@@ -32,10 +32,31 @@ for cellpos in tilemap.get_used_cells():
         tilemap.set_cellv(cellpos, -1) # hide placeholder tile
 ```
 
-I had to be careful to not 
+I had to be careful to not do this before all the nodes were loaded, or I could be referencing a tilemap that doesn't exist. I discuss the design I implemented to fix this later in the documenation.
 
 ## Game Design Document
 
 ## Software Engineering Plan
 
+### Structure of the project
+
+- [Game.gd](Game.gd) - Game manager script
+- [Player.gd](Player.gd) - Player movement script
+- [Spot.gd](Spot.gd) - Level completing tiles affected by player
+- [Tile.tscn](Tile.tscn) - Scene that replaces placeholder tiles
+- [LevelConstants.tscn](LevelConstants.tscn) - Group of nodes necessary for every level
+- [Player.tscn](Player.tscn) - Simple scene for player movement and control
+- Levels - Directory of levels in game
+  - [Level1.tscn](Levels/Level1.tscn)
+  - [Level2.tscn](Levels/Level2.tscn)
+  - ...
+  - [Level11.tscn](Levels/Level11.tscn)
+- Assets
+  - [player.png](Assets/player.png) - Player Sprite image
+  - [wall.png](Assets/wall.png) - Wall Sprite image
+  - [tile.png](Assets/tile.png) - Unactivated Tile Sprite image, when activated modulates to green
+  - [tileFlip.ogg](Assets/tileFlip.ogg) - Sound effect for tile activation
+  - [yoster-island.regular.ttf](Assets/yoster-island.regular.ttf) - Font data for custom font
+- [Exports](./Exports/) - Directory for project builds to HTML5 (**must** contain index.html)
+  
 ## State Transition Diagram
