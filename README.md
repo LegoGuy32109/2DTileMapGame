@@ -63,7 +63,11 @@ The Player scene consisits of a KinematicBody host with the `Player.gd` script a
 
 ![image of node tree in Player scene](ScreenShots/PlayerNodeTree.jpg)
 
-The player moves by checking `_unhandled_input(event)` and determining if the event corresponds to a direction. It will also reset the scene if the event is 'reset' from an **R**. As it initiall moves, it calculates the vector of movement from an identity vector in the direction multiplied by the grid_size, in this case the game is 16x16 so `grid_size = 16`. First, the raycast is cast along that vector, then updated to receive collision information. Depending on if the player just tried to move into a wall, it may not move at all but if it can move, it starts the `continue_move(vector_pos: Vector2)` function based on the direction. This will move the Player however many spaces it can, checking each time if a collision has been made then stopping. This implements that behavior I see on mobile game adds of a ball sliding across an ice puzzle, and I was inspried to recreate it.
+The player moves by checking `_unhandled_input(event)` and determining if the event corresponds to a direction. It will also reset the scene if the event is 'reset' from an **R**. As it initiall moves, it calculates the vector of movement from an identity vector in the direction multiplied by the grid_size, in this case the game is 16x16 so `grid_size = 16`. First, the raycast is cast along that vector, then updated to receive collision information. Depending on if the player just tried to move into a wall, it may not move at all but if it can move, it starts the `continue_move(vector_pos: Vector2)` function based on the direction. This will move the Player however many spaces it can, checking each time if a collision has been made then stopping. This implements that behavior I see on mobile game ads of a ball sliding across an ice puzzle, and I was inspried to recreate it.
+
+### Tile/Spot Components
+
+The tile is a scene that involves a sprite of the [`tile.png` ![tile sprite image](Assets/tile.png)](Assets/tile.png), when it detects an entity that is in the 'player' group enters it's area node 
 
 ## Software Engineering Plan
 
