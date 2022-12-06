@@ -1,14 +1,38 @@
-# My TileMap Game [(Only 1% can get to Level 10!!)](https://legoguy32109.itch.io/only-1-can-make-it-to-level-10) Documentation
+# My tileMap Game [(Only 1% can get to Level 10!!)](https://legoguy32109.itch.io/only-1-can-make-it-to-level-10) Documentation
 
 Final Project for 2D game development from Andy Harris *(Inspired by mobile game ads)*
 * * *
-![image](ScreenShots/Lv2.jpg)
-![image](ScreenShots/Lv9.jpg)
+![Level 2 screenshot](ScreenShots/Lv2.jpg)
+![Level 9 screenshot](ScreenShots/Lv9.jpg)
 
 ## User Instructions
 
-To play my game, just click the **[bold link here](https://legoguy32109.itch.io/only-1-can-make-it-to-level-10)** or up in the title to reach the itch.io page. You can run it in your browser and you move the player with WASD or the arrow keys ➡⬅⬆⬇.
+To play my game, just click the **[bold link here](https://legoguy32109.itch.io/only-1-can-make-it-to-level-10)** or up in the title to reach the itch.io page. You can run it in your browser and you move the player with WASD or the arrow keys ➡⬅⬆⬇. Unfortunately it is not mobile friendly, you will need a computer with a keyboard and an internet connection.
 
+The game is made in [Godot](https://godotengine.org/), an amazing game engine that makes game design fun. Using nodes I was quickly able to prototype game mechanics, then hone them through GDscript. I was drawn to use Godot beacuse of their interesting tileMap editor. I was getting exhausted manually inputting coordinates to design levels. With some interesting advice from [PlayWithFurcifer](https://www.youtube.com/watch?v=5mGa2m_qCPQ) I discovered how to use scenes for tileMaps!
+
+What that last part meant, was initially the biggest limitation for tile maps is that you can draw reigons for Collisons, light Occlusions, or a connected Nav mesh for path finding. These features are fine for the walls that only need collision areas, but I needed player interacts to happen when I walked over these tiles...
+![image of tileSet editor, it has limited functionality](ScreenShots/tileSetEditor.jpg)
+
+This behavior can be encapsultaed in a scene, which is the Godot answer to Unity prefabs. A simple area that modulates itself to be greener when the player walks over it. It also store the state that it's activated so it won't be activated again, as without that the sound effect would constantly play as the character moved over them.
+
+The soultion, render a dummy tile in the tileMap that are individually replaced by the scene as the level loads. [Here](Game.gd#L22) I go through each cell in the tileMap, identify if it's the dummy and should be replaced, then render and instance of the proper tile from the scene and add it to the same position of the current dummy.
+
+```GDscript
+# in Game.gd ...
+
+for cellpos in tilemap.get_used_cells():
+    var cell = tilemap.get_cellv(cellpos)
+    # if the cell is labeled 0, it's the spot tiles and we want to replace 
+    if cell == 0:
+        # generate an instance of the tile place it at tileMap position
+        var tile = spot.instance()
+        tile.position = tilemap.map_to_world(cellpos) * tilemap.scale
+        $Spots.add_child(tile)
+        tilemap.set_cellv(cellpos, -1) # hide placeholder tile
+```
+
+I had to be careful to not 
 
 ## Game Design Document
 
