@@ -57,9 +57,21 @@ Each level is titled `Level<level_number>.tscn` in a the `./Levels` directory. W
 
 Early in development, I had the game manager script attached to the scene root, so it could access all the nodes under it. I later found I was copying a lot of nodes with no changes, so I decided to put these 'level constants' into a scene and easily reuse them for each level. I then found that attaching the game manager script to this scene made a lot more sense then having to navigate down a node to grab data from all the nodes, so I simply rewrote any reference to the tileMap to be the first child of the parent. `onready var tilemap = get_parent().get_child(0)` The final headache was when the script would run too early before all the nodes had been loaded into the scene, and I would get errors trying to replace tiles that didn't exist yet. To fix that I simply added checks that the scene was loaded, `ready == true` and double check the objects I was referencing existed `if tilemap:`. I highly recommend seperating objects you use with no changes into a scene that you can reference later, it made generating levels a lot easier. Also, when you set the LevelConstants scene to have editable children, I could then specify the location of the player and labels when I needed to change their postions depending on the level design, very convenient. 👍
 
+### Game.gd components
+
+The game manager script does multiple things:
+
+1. Identify next level to load after end state
+2. Set labels appropriately at the beginning and during gameplay
+3. Aquire the tilemap node, and replace placeholder tiles with instances of a functioning 'Spot' scene.
+4. Identify end state is reached when all Spot scenes are active.
+5. Change the level when the accept dialog transmits confirmation.
+
+More information can be found in [Game.gd](Game.gd)
+
 ### Player Components
 
-The Player scene consisits of a KinematicBody host with the `Player.gd` script attached. I make use of the collision shape system in Godot that interacts well with raycasts to check for collisions during movement. The sprite is named Player and is an image I edited from reference.
+The Player scene consisits of a KinematicBody host with the [`Player.gd`](Player.gd) script attached. I make use of the collision shape system in Godot that interacts well with raycasts to check for collisions during movement. [The sprite ![sprite of player](./Assets/player.png)](Assets/player.png) is named Player and is an image I edited from reference.
 
 ![image of node tree in Player scene](ScreenShots/PlayerNodeTree.jpg)
 
@@ -67,7 +79,15 @@ The player moves by checking `_unhandled_input(event)` and determining if the ev
 
 ### Tile/Spot Components
 
-The tile is a scene that involves a sprite of the [`tile.png` ![tile sprite image](Assets/tile.png)](Assets/tile.png), when it detects an entity that is in the 'player' group enters it's area node 
+The tile is a scene that involves a sprite of the [`tile.png` ![tile sprite image](Assets/tile.png)](Assets/tile.png), when it detects an entity of the 'player' group entering it's area node, it sets it's active state to true. Once true it does not need to alter it's state again so it stops checking for entities. It also plays a sound effect once activated that is a heavily edited clib of [squidward walking](https://www.youtube.com/watch?v=mGFNq_IK4KY).
+
+### Tilemap
+
+The tilemaps are unique to each level, and they consist of 2 types of tiles. There are wall tiles that have collisions, and goal tiles that are placeholders. I mentioned earlier how I was able to [use these place holders as positions to spawn instances of a scene](https://github.com/LegoGuy32109/2DTileMapGame#tilemap-innovation-found-in-this-video), making the tilemapper tool incredibly useful.
+
+![example of tilemap in level 7](ScreenShots/TilemapEx.jpg)
+
+Instead of manually editing the cordinates of these tiles, I can simply paint or copy and paste anywhere I want in the scene. It's pretty amazing for efficency, I wouldn't be able to make as many levels I did for my project without this tool. It can be finnicky, and is confusing without understanding the UI for editing tilesets. These are problems that are supposed to be solved in the new version of [Godot](https://godotengine.org/) coming out v4.0.0.
 
 ## Software Engineering Plan
 
