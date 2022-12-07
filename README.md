@@ -123,3 +123,5 @@ I didn't partner with anyone, but here's some information on the components of t
 - [Exports](./Exports/) - Directory for project builds to HTML5 (**must** contain index.html)
   
 ## State Transition Diagram
+
+![state transition diagram](ScreenShots/2DTileStateDiagram.drawio.png)
